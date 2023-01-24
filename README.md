@@ -1,2 +1,2 @@
 # WebServ
-Creating a http web server to handle requests.
+Creating a HTTP web server to handle requests.
