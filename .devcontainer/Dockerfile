@@ -8,7 +8,11 @@ COPY ./reinstall-cmake.sh /tmp/
 RUN if [ "${REINSTALL_CMAKE_VERSION_FROM_SOURCE}" != "none" ]; then \
         chmod +x /tmp/reinstall-cmake.sh && /tmp/reinstall-cmake.sh ${REINSTALL_CMAKE_VERSION_FROM_SOURCE}; \
     fi \
-    && rm -f /tmp/reinstall-cmake.sh
+    && rm -f /tmp/reinstall-cmake.sh \
+	&& apt-get update && apt-get install cowsay -y \
+	&& apt-get install siege -y \
+	&& apt-get install fortune -y && apt install python3-pip -y && pip install requests \
+	&& pip install python-dotenv && apt install php -y
 
 # [Optional] Uncomment this section to install additional vcpkg ports.
 # RUN su vscode -c "${VCPKG_ROOT}/vcpkg install <your-port-name-here>"

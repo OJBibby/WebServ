@@ -4,13 +4,35 @@
 	"name": "C++",
 	"build": {
 		"dockerfile": "Dockerfile"
-	}
-
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/github-cli:1": {}
+	},
+	"runArgs": ["--add-host=webserv:127.0.0.2", "--add-host=webserv2:127.0.0.2" ],
+	
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
-
+	
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [
+		"webserv:8000",
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"gurumukhi.selected-lines-count",
+				"Gruntfuggly.todo-tree",
+				"GitHub.copilot",
+				"GitHub.copilot-labs",
+				"mhutchie.git-graph",
+				"ms-vscode.cpptools",
+				"ms-vscode.cpptools-extension-pack",
+				"panzerstadt.light-dark-toggle",
+				"ms-python.python",
+				"ms-vsliveshare.vsliveshare"
+			]
+		}
+	}
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "gcc -v",

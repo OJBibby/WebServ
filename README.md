@@ -1,2 +1,2 @@
-# WebServ
-Creating a HTTP web server to handle requests.
+# webserv
+c++ implementation of web server

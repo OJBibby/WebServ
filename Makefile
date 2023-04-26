@@ -1,50 +1,82 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: obibby <obibby@student.42wolfsburg.de>     +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/01/06 20:17:58 by libacchu          #+#    #+#              #
-#    Updated: 2023/01/24 14:19:49 by obibby           ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+################################################################################
+################################ COMPILER & FLAGS ##############################
+################################################################################
 
-NAME	=	webserv
-OBJ_DIR =	obj/
-LIBFT	=	./libft/
-SRC_DIR =	src/
-SRC		=	main.c
-INC		=	includes/server.hpp
-SRCS	=	$(addprefix $(SRC_DIR), $(SRC))
-OBJ		=	$(SRCS:%.c=$(OBJ_DIR)%.o)
-CC		=	gcc
-CFLAGS	=	-Wall -Wextra -Werror -std=c++98
-GREY	=	\33[1;30m
-BLUE	=	\33[0;34m
-RESET	=	\33[0m
+CC =		g++
 
-all : $(NAME)
+CFLAGS	=	-Wall -Wextra -Werror -Wshadow -std=c++98 -O3
 
-$(OBJ_DIR)%.o : %.c
-	@mkdir -p $(@D)
-	@printf "\33[2K\r$(GREY)Compiling $(BLUE)$<"
-	@$(CC) $(CFLAGS) -c -g $< -o $@
+DEBUG =		-Wall -Wextra -Werror -g -std=c++98
 
-$(NAME) : $(OBJ) $(INC)
-	@make re -C $(LIBFT)
-	@printf "\33[2K\r$(GREY)Compiling $(BLUE)$(NAME)$(RESET)\n"
-	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME) $(LIBS)
+VAL =		valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes
 
-clean :
-	@printf "$(GREY)Removing $(BLUE)$(OBJ)$(RESET)\n"
-	@make fclean -C $(LIBFT)
-	@rm -fr $(OBJ_DIR)
+################################################################################
+################################### LIBRARIES ##################################
+################################################################################
 
-fclean : clean
-	@printf "$(GREY)Removing $(BLUE)$(NAME)$(RESET)\n"
-	@rm -f $(NAME)
+FT_INC	= 		-I ./include/
+				
+INCLUDES = 		$(FT_INC)
 
-re : fclean all
+SRCDIR =		src/
 
-.PHONY : all clean fclean re
+OBJDIR =		obj/
+
+################################################################################
+################################## SRCS & SRCS #################################
+################################################################################
+
+SRCS	=	$(SRCDIR)Config.cpp			\
+			$(SRCDIR)ConfigParser.cpp	\
+			$(SRCDIR)Location.cpp		\
+			$(SRCDIR)httpHeader.cpp		\
+			$(SRCDIR)Server.cpp			\
+			$(SRCDIR)ServerManager.cpp	\
+			$(SRCDIR)Response.cpp		\
+			$(SRCDIR)MIME.cpp			\
+			$(SRCDIR)CGI.cpp			\
+			$(SRCDIR)minilib.cpp		\
+			$(SRCDIR)main.cpp			\
+
+OBJS	=	$(SRCS:$(SRCDIR)%.cpp=$(OBJDIR)%.o)
+
+################################################################################
+#################################### PROGRAM ###################################
+################################################################################
+
+EXEC =		webserv
+
+RUN =		./webserv
+
+################################################################################
+#################################### RULES #####################################
+################################################################################
+
+all:		$(EXEC)
+
+$(EXEC):	$(OBJDIR) $(OBJS)
+	$(CC) $(OBJS) $(INCLUDES) -o $(EXEC) $(CFLAGS)
+
+debug:	$(OBJDIR) $(OBJS)
+	$(CC) $(OBJS) $(INCLUDES) -o $(EXEC) $(DEBUG)
+
+$(OBJDIR):
+	mkdir -p $(@D)
+
+$(OBJDIR)%.o: $(SRCDIR)%.cpp
+	$(CC) $(CFLAGS) -c -g $< -o $@
+
+clean:
+	rm -fr $(OBJDIR)
+fclean:		clean
+	rm -f $(EXEC)
+
+re:			fclean all
+
+launch: fclean debug
+	$(RUN)
+
+test: debug
+	$(VAL) $(RUN)
+
+.PHONY: all debug clean fclean re launch test
